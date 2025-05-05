@@ -1,0 +1,88 @@
+<div class="container-fluid d-flex flex-column py-3" style="max-height: 90vh; height: 90vh">
+     <div class="d-flex justify-content-between align-items-center border-bottom py-3 px-3">
+          <ng-container *ngIf="dialogeData">
+               <h5 class="mb-0">
+                    {{ dialogeData.title }}
+               </h5>
+          </ng-container>
+          <button mat-dialog-close class="btn btn-sm" (click)="closeDialog()">
+               <i class="fas fa-times"></i>
+          </button>
+     </div>
+
+     <div class="flex-grow-1 overflow-auto px-3 py-3">
+          <form [formGroup]="eventForm" (ngSubmit)="saveModifiedData()">
+               <div class="row g-3">
+                    <div class="col-md-6">
+                         <label class="form-label required">Title</label>
+                         <input class="form-control" formControlName="title" (blur)="displaySingleFormError(eventForm)" />
+                         <small class="text-danger fnt-12 fst-italic fw-bold" *ngIf="formErrors.title">{{ formErrors.title }} </small>
+                         <br />
+                    </div>
+                    <div class="col-md-6">
+                         <label class="form-label required">Date</label>
+                         <input type="date" class="form-control" formControlName="date" (blur)="displaySingleFormError(eventForm)" />
+                         <small class="text-danger fnt-12 fst-italic fw-bold" *ngIf="formErrors.date">{{ formErrors.date }} </small>
+                         <br />
+                    </div>
+                    <div class="col-md-6">
+                         <label class="form-label required">Location</label>
+                         <input class="form-control" formControlName="location" (blur)="displaySingleFormError(eventForm)" />
+                         <small class="text-danger fnt-12 fst-italic fw-bold" *ngIf="formErrors.location">{{ formErrors.location }} </small>
+                         <br />
+                    </div>
+                    <div class="col-md-6">
+                         <label class="form-label required">Product</label>
+                         <input class="form-control" formControlName="product" (blur)="displaySingleFormError(eventForm)" />
+                         <small class="text-danger fnt-12 fst-italic fw-bold" *ngIf="formErrors.product">{{ formErrors.product }} </small>
+                         <br />
+                    </div>
+                    <div class="col-md-6">
+                         <label class="form-label required">Scope</label>
+                         <input class="form-control" formControlName="scope" (blur)="displaySingleFormError(eventForm)" />
+                         <small class="text-danger fnt-12 fst-italic fw-bold" *ngIf="formErrors.scope">{{ formErrors.scope }} </small>
+                         <br />
+                    </div>
+                    <div class="col-md-6">
+                         <label class="form-label required">Category</label>
+                         <input class="form-control" formControlName="category" (blur)="displaySingleFormError(eventForm)" />
+                         <small class="text-danger fnt-12 fst-italic fw-bold" *ngIf="formErrors.category">{{ formErrors.category }} </small>
+                         <br />
+                    </div>
+                    <div class="col-md-6">
+                         <label class="form-label required">Popularity</label>
+                         <input type="number" class="form-control" formControlName="popularity" (blur)="displaySingleFormError(eventForm)" />
+                         <small class="text-danger fnt-12 fst-italic fw-bold" *ngIf="formErrors.popularity">{{ formErrors.popularity }} </small>
+                         <br />
+                    </div>
+                    <div class="col-md-6">
+                         <label class="form-label required">Status</label>
+                         <select class="form-select" formControlName="status" (blur)="displaySingleFormError(eventForm)">
+                              <option value="Live">Live</option>
+                              <option value="Upcoming">Upcoming</option>
+                              <option value="Ended">Ended</option>
+                         </select>
+                         <small class="text-danger fnt-12 fst-italic fw-bold" *ngIf="formErrors.status">{{ formErrors.status }} </small>
+                         <br />
+                    </div>
+                    <div class="col-12">
+                         <label class="form-label">Description</label>
+                         <textarea rows="3" class="form-control" formControlName="description"></textarea>
+                    </div>
+                    <div class="col-12">
+                         <label class="form-label">Image URL</label>
+                         <input class="form-control" formControlName="image" />
+                    </div>
+                    <div class="col-12">
+                         <label class="form-label">Hashtag</label>
+                         <input class="form-control" formControlName="hashtag" />
+                    </div>
+               </div>
+          </form>
+     </div>
+
+     <div class="border-top px-3 py-1 d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-outline-secondary" (click)="closeDialog()">Cancel</button>
+          <button type="submit" class="btn btn-primary" (click)="saveModifiedData()">Save Changes</button>
+     </div>
+</div>
