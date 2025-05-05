@@ -5,7 +5,8 @@
                <div class="col-12 col-md-6 p-4">
                     <div class="d-flex align-items-center mb-3">
                          <span class="badge bg-danger text-white me-2">{{ featuredEvent.category }}</span>
-                         <span class="badge bg-success text-white" *ngIf="featuredEvent?.status === 'Live'">{{ featuredEvent.status }}</span>
+                         <span class="badge bg-success text-white" *ngIf="featuredEvent?.status === 'Live'">{{
+                              featuredEvent.status }}</span>
                     </div>
                     <h2 class="mb-3">{{ featuredEvent.title }}</h2>
                     <p class="text-muted mb-3">
@@ -20,19 +21,23 @@
                     </div>
                     <div class="d-flex gap-3 flex-wrap align-items-center">
                          <button class="btn btn-primary" (click)="registerEvent(featuredEvent)">Register Now</button>
-                         <button class="btn btn-outline-primary" (click)="openDetailsModal(featuredEvent)">Learn More</button>
+                         <button class="btn btn-outline-primary" (click)="openDetailsModal(featuredEvent)">Learn
+                              More</button>
                          <button class="btn btn-outline-secondary rounded-pill" (click)="toggleFavorite(featuredEvent)">
                               <i class="bi" [ngClass]="isFavorite(featuredEvent) ? 'bi-heart-fill' : 'bi-heart'"></i>
                          </button>
-                         <button class="btn btn-outline-secondary rounded-pill px-3 py-2" (click)="shareEvent(featuredEvent)">
+                         <button class="btn btn-outline-secondary rounded-pill px-3 py-2"
+                              (click)="shareEvent(featuredEvent)">
                               <i class="bi bi-share"></i>
                          </button>
                     </div>
-                    <p class="text-muted mt-3" *ngIf="featuredEvent?.countdown">Starts in: {{ featuredEvent.countdown }}</p>
+                    <p class="text-muted mt-3" *ngIf="featuredEvent?.countdown">Starts in: {{ featuredEvent.countdown }}
+                    </p>
                </div>
 
                <div class="col-12 col-md-6">
-                    <img src="../../../assets/images/hero/banner.png" alt="banner" class="img-fluid w-100 h-100" style="object-fit: cover" loading="lazy" />
+                    <img src="../../../assets/images/hero/banner.png" alt="banner" class="img-fluid w-100 h-100"
+                         style="object-fit: cover" loading="lazy" />
                </div>
           </div>
      </div>
@@ -42,19 +47,16 @@
           <div class="row g-2">
                <div class="col-12 col-md-6 col-lg-4" *ngFor="let event of upcomingEvents">
                     <div class="card border-0 rounded-3 overflow-hidden bg-light transition-all">
-                         <img [src]="event.image" [alt]="event.title" class="card-img-top img-fluid" style="height: 220px; object-fit: cover" loading="lazy" />
+                         <img [src]="event.image" [alt]="event.title" class="card-img-top img-fluid"
+                              style="height: 220px; object-fit: cover" loading="lazy" />
                          <div class="card-body p-4">
                               <div class="d-flex align-items-center mb-3">
                                    <span class="badge bg-danger text-white me-2">{{ event.category }}</span>
-                                   <span
-                                        class="badge"
-                                        [ngClass]="{
+                                   <span class="badge" [ngClass]="{
                                              'bg-success': event.status === 'Live',
                                              'bg-warning': event.status === 'Upcoming',
                                              'bg-secondary': event.status === 'Ended'
-                                        }"
-                                        >{{ event.status }}</span
-                                   >
+                                        }">{{ event.status }}</span>
                               </div>
                               <h4 class="mb-2">
                                    {{ event.title }}
@@ -63,14 +65,16 @@
                                    {{ event.date }} |
                                    {{ event.location }}
                               </p>
-                              <p class="mb-4" style="font-size: 1rem; line-height: 1.7">{{ event.description | slice: 0 : 100 }}{{ event.description.length > 100 ? '...' : '' }}</p>
+                              <p class="mb-4" style="font-size: 1rem; line-height: 1.7">{{ event.description | slice: 0
+                                   : 100 }}{{ event.description.length > 100 ? '...' : '' }}</p>
 
                               <p class="mb-4">
                                    <a href="#" class="text-decoration-none text-primary fs-5">{{ event.hashtag }}</a>
                               </p>
                               <div class="d-flex gap-3 flex-wrap">
                                    <button class="btn btn-primary" (click)="registerEvent(event)">Register Now</button>
-                                   <button class="btn btn-outline-secondary rounded-pill" (click)="toggleFavorite(event)">
+                                   <button class="btn btn-outline-secondary rounded-pill"
+                                        (click)="toggleFavorite(event)">
                                         <i class="bi" [ngClass]="isFavorite(event) ? 'bi-heart-fill' : 'bi-heart'"></i>
                                    </button>
                               </div>
@@ -87,7 +91,8 @@
      <section>
           <div class="d-flex justify-content-between align-items-center mb-3 px-2">
                <h3 class="mb-0 fw-bold text-primary">Recent Events</h3>
-               <button class="btn btn-primary btn-sm px-3 d-flex align-items-center gap-2 shadow-sm" (click)="createNewEvent()"><i class="fas fa-plus"></i> Create Event</button>
+               <button class="btn btn-primary btn-sm px-3 d-flex align-items-center gap-2 shadow-sm"
+                    (click)="createNewEvent()"><i class="fas fa-plus"></i> Create Event</button>
           </div>
 
           <div class="d-flex flex-wrap align-items-center gap-3 mb-4 w-100">
@@ -95,12 +100,13 @@
                     <span class="input-group-text bg-white border-end-0">
                          <i class="bi bi-search fs-5 text-muted"></i>
                     </span>
-                    <input type="text" class="form-control border-start-0" placeholder="Search events..." [(ngModel)]="searchText" />
+                    <input type="text" class="form-control border-start-0" placeholder="Search events..."
+                         [(ngModel)]="searchText" (ngModelChange)="onSearchChange()" />
                </div>
 
                <mat-form-field appearance="outline" class="filter-field m-0" style="min-width: 150px">
                     <mat-label>Category</mat-label>
-                    <mat-select [(value)]="selectedCategory" (selectionChange)="filterEvents()">
+                    <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyFilters()">
                          <mat-option value="">All Categories</mat-option>
                          <mat-option value="Tech">Tech</mat-option>
                          <mat-option value="Business">Business</mat-option>
@@ -110,7 +116,7 @@
 
                <mat-form-field appearance="outline" class="filter-field m-0" style="min-width: 100px">
                     <mat-label>Year</mat-label>
-                    <mat-select [(value)]="selectedYear" (selectionChange)="filterEvents()">
+                    <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyFilters()">
                          <mat-option value="">All Years</mat-option>
                          <mat-option value="2025">2025</mat-option>
                          <mat-option value="2024">2024</mat-option>
@@ -119,7 +125,7 @@
 
                <mat-form-field appearance="outline" class="filter-field m-0" style="min-width: 150px">
                     <mat-label>Product</mat-label>
-                    <mat-select [(value)]="selectedProduct" (selectionChange)="filterEvents()">
+                    <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyFilters()">
                          <mat-option value="">All Products</mat-option>
                          <mat-option value="Google Play">Google Play</mat-option>
                          <mat-option value="Multi-product">Multi-product</mat-option>
@@ -130,7 +136,7 @@
 
                <mat-form-field appearance="outline" class="filter-field m-0" style="min-width: 120px">
                     <mat-label>Sort By</mat-label>
-                    <mat-select [(value)]="sortBy" (selectionChange)="sortEvents()">
+                    <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyFilters()">
                          <mat-option value="date">Date</mat-option>
                          <mat-option value="title">Title</mat-option>
                          <mat-option value="popularity">Popularity</mat-option>
@@ -143,7 +149,8 @@
           </div>
 
           <div class="table-responsive shadow-sm rounded">
-               <table mat-table [dataSource]="filteredEvents.data | searchEvents: searchText" class="table table-hover align-middle mb-0" matSort>
+               <table mat-table [dataSource]="filteredEvents" class="table table-hover align-middle mb-0" matSort>
+                    class="table table-hover align-middle mb-0" matSort>
                     <ng-container matColumnDef="date">
                          <th mat-header-cell *matHeaderCellDef class="fs-6">Date</th>
                          <td mat-cell *matCellDef="let event" class="text-muted">{{ event.date }}</td>
@@ -151,7 +158,8 @@
                     <ng-container matColumnDef="title">
                          <th mat-header-cell *matHeaderCellDef class="fs-6">Title</th>
                          <td mat-cell *matCellDef="let event">
-                              <a href="#" class="text-primary text-decoration-none fw-semibold" (click)="openDetailsModal('')">{{ event.title }}</a>
+                              <a href="#" class="text-primary text-decoration-none fw-semibold"
+                                   (click)="openDetailsModal('')">{{ event.title }}</a>
                          </td>
                     </ng-container>
                     <ng-container matColumnDef="product">
@@ -195,6 +203,7 @@
                     <tr mat-row *matRowDef="let row; columns: displayedColumns" class="transition-all"></tr>
                </table>
           </div>
-          <mat-paginator [pageSizeOptions]="[5, 10, 20]" [pageSize]="5" [length]="filteredEvents.data.length" (page)="onPageChange($event)" class="bg-white shadow-sm rounded mt-4" aria-label="Paginate recent events"></mat-paginator>
+          <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
      </section>
 </div>

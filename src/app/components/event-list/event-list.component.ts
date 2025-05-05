@@ -1,7 +1,7 @@
 import { ScrollStrategyOptions } from '@angular/cdk/overlay';
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { EventData } from 'src/app/shared/interfaces/common.interface';
@@ -14,28 +14,31 @@ import { EditEventPopupComponent } from '../popups/edit-event-popup/edit-event-p
      templateUrl: './event-list.component.html',
      styleUrls: ['./event-list.component.scss']
 })
-export class EventListComponent implements OnInit {
+export class EventListComponent implements OnInit, AfterViewInit {
      public featuredEvent!: EventData;
      public upcomingEvents: EventData[] = [];
      public filteredEvents = new MatTableDataSource<EventData>([]);
      public displayedColumns: string[] = ['date', 'title', 'product', 'scope', 'status', 'actions'];
      public searchText: string = '';
+     public selectedCategory: string = '';
      public selectedYear: string = '';
      public selectedProduct: string = '';
-     public selectedCategory: string = '';
-     public sortBy: string = 'date';
+     public sortBy: string = '';
      public favoriteEvents: number[] = [];
      public selectedEvent: EventData | null = null;
      public pageSize: number = 5;
      public pageIndex: number = 0;
      public paginatedEvents: any[] = [];
+     allEvents: EventData[] = [];
+
+     @ViewChild(MatPaginator) paginator!: MatPaginator;
 
      constructor(
           private _eventService: EventService,
           private _snackBar: MatSnackBar,
           private _dialog: MatDialog,
           private _scrollStrategyOptions: ScrollStrategyOptions
-     ) {}
+     ) { }
 
      ngOnInit(): void {
           this._eventService.getFeaturedEvent().subscribe({
@@ -43,12 +46,12 @@ export class EventListComponent implements OnInit {
                     this.featuredEvent = {
                          ...event,
                          countdown: this.calculateCountdown(event.date),
-                         status: this.getEventStatus(event.date)
+                         status: this.getEventStatus(event.date),
                     };
                },
                error: () => {
                     this._snackBar.open('Failed to load featured event', 'Close', { duration: 3000 });
-               }
+               },
           });
 
           this._eventService.getUpcomingEvents().subscribe({
@@ -56,24 +59,26 @@ export class EventListComponent implements OnInit {
                     this.upcomingEvents = events.map((event) => ({
                          ...event,
                          countdown: this.calculateCountdown(event.date),
-                         status: this.getEventStatus(event.date)
+                         status: this.getEventStatus(event.date),
                     }));
                },
                error: () => {
                     this._snackBar.open('Failed to load upcoming events', 'Close', { duration: 3000 });
-               }
+               },
           });
 
           this._eventService.getRecentEvents().subscribe({
                next: (events) => {
-                    this.filteredEvents.data = events.map((event) => ({
+                    this.allEvents = events.map((event) => ({
                          ...event,
-                         status: this.getEventStatus(event.date)
+                         status: this.getEventStatus(event.date),
                     }));
+
+                    this.applyFilters();
                },
                error: () => {
                     this._snackBar.open('Failed to load recent events', 'Close', { duration: 3000 });
-               }
+               },
           });
 
           const savedFilters = this._eventService.loadFilters();
@@ -81,6 +86,51 @@ export class EventListComponent implements OnInit {
           this.selectedProduct = savedFilters.product || '';
           this.selectedCategory = savedFilters.category || '';
           this.favoriteEvents = JSON.parse(localStorage.getItem('favoriteEvents') || '[]');
+     }
+
+
+     ngAfterViewInit(): void {
+          this.filteredEvents.paginator = this.paginator;
+     }
+     applyFilters() {
+          let events = this.allEvents;
+
+          if (this.searchText.trim()) {
+               const searchLower = this.searchText.trim().toLowerCase();
+               events = events.filter(e =>
+                    e.title.toLowerCase().includes(searchLower) ||
+                    e.product?.toLowerCase().includes(searchLower) ||
+                    e.status?.toLowerCase().includes(searchLower)
+               );
+          }
+
+          if (this.selectedCategory) {
+               events = events.filter(e => e.category === this.selectedCategory);
+          }
+
+          if (this.selectedYear) {
+               events = events.filter(e => e.date.includes(this.selectedYear));
+          }
+
+          if (this.selectedProduct) {
+               events = events.filter(e => e.product === this.selectedProduct);
+          }
+
+          if (this.sortBy) {
+               events = [...events].sort((a, b) => {
+                    if (this.sortBy === 'date') return new Date(b.date).getTime() - new Date(a.date).getTime();
+                    if (this.sortBy === 'title') return a.title.localeCompare(b.title);
+                    if (this.sortBy === 'popularity') return (b.popularity ?? 0) - (a.popularity ?? 0);
+                    return 0;
+               });
+          }
+
+          this.filteredEvents.data = events;
+          this.filteredEvents.paginator = this.paginator;
+     }
+
+     onSearchChange() {
+          this.applyFilters();
      }
 
      public calculateCountdown(date: string) {
@@ -211,7 +261,7 @@ export class EventListComponent implements OnInit {
           this._snackBar.open(`Registered for ${event.title}`, 'Close', { duration: 3000 });
      }
 
-     public onPageChange(event: PageEvent): void {}
+     public onPageChange(event: PageEvent): void { }
 
      public editEvent(event: EventData) {
           let payload = {
